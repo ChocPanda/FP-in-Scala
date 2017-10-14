@@ -1,9 +1,11 @@
 package org.panda.lists
 
 sealed trait MyList[+A] {
-    // def foldRight[A, B](as: MyList[A], base: B)(f: (A, B) => B): B = MyList.foldRight(this, base)(f)
+    def foldRight[P >: A, Q](as: MyList[P], base: Q)(f: (P, Q) => Q): Q = MyList.foldRight(this, base)(f)
 
-    // def foldRight[A, B](base: B, shortCircuit: A => Boolean)(f: (A, B) => B): B = MyList.foldRight(this, base, shortCircuit)(f)
+    def foldRight[P >: A, Q](base: Q, shortCircuitCase: P => Boolean, shortCircuit: Q)(f: (P, Q) => Q): Q = {
+        MyList.foldRight(this, base, shortCircuitCase, shortCircuit)(f)
+    }
     
     def sum[B >: A](implicit num: Numeric[B]): B = MyList.sum(num)(this)
 
