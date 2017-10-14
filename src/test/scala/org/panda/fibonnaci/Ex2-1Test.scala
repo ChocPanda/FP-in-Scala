@@ -5,7 +5,7 @@ import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks
 import org.panda.tags._
 
-class FibonacciSpec extends FreeSpec with Matchers with PropertyChecks {
+class FibonacciTests extends FreeSpec with Matchers with PropertyChecks {
   "The Fibonacci object" - {
     "fib(1) should return 0" in {
       Fibonacci.fib(1) shouldEqual 0

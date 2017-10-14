@@ -2,7 +2,7 @@ package org.panda.arrays
 
 import org.scalatest._
 
-class ArraySpec extends FreeSpec with Matchers {
+class ArrayTests extends FreeSpec with Matchers {
   "The Sorted object" - {
     "isSorted should return true for a simple sequence of integers" in {
         Sorted.isSorted(Array(1, 2, 3), (a: Int, b: Int) => a <= b) shouldBe true
