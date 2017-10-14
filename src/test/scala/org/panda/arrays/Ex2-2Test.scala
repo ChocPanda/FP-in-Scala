@@ -1,9 +1,6 @@
 package org.panda.arrays
 
 import org.scalatest._
-import org.scalacheck.Gen
-import org.scalatest.prop.PropertyChecks
-import org.panda.tags._
 
 class ArraySpec extends FreeSpec with Matchers {
   "The Sorted object" - {
