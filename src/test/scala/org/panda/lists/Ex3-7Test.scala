@@ -1,21 +1,17 @@
 package org.panda.lists
 
 import org.scalatest._
-import org.scalacheck.Gen
+import org.scalacheck.{Gen, Arbitrary}
+import org.scalacheck.Gen._
 import org.scalatest.prop.PropertyChecks
 
 class MyListTests extends FlatSpec with Matchers with PropertyChecks {
 
-    /**
-    This is unused I just wanted to try and write it. It could be improved by increasing the probablity
-    of having longer lists or by better integrating my list with the scala.Collections library by implementing
-    TraversableLike, etc... so scalacheck could simply use Gen.containerOf, however that felt wildly out of scope.
-     **/     
-    implicit def myListGen[A](implicit aGen: Gen[A], lGen: Gen[MyList[A]]) = for {
-        head <- aGen
-        tail <- lGen
-        myList <- Gen.oneOf(MyNil, Cons(head, MyNil), Cons(head, tail))
-    } yield myList
+    implicit def myListGen[T](implicit aGen: Arbitrary[T]): Arbitrary[MyList[T]] = Arbitrary {
+        for {
+            seq <- Gen.containerOf[Seq, T](aGen.arbitrary)
+        } yield MyList.apply(seq: _*)
+    }
 
     "MyList.sum && MyList.lsum" should "match the sum of a scala.collections.List[Int]" in {
         forAll { list: List[Int] =>
@@ -47,19 +43,33 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         }        
     }
 
-    // "MyList.reverse" should "return the same list as a scala.collections.List[Int]" in {
-    //     forAll { list: List[Int] =>
-    //         val myList = MyList.apply(list: _*)
+    "MyList.reverse" should "return the same list as a scala.collections.List[Int]" in {
+        forAll { list: List[Int] =>
+            val myList = MyList.apply(list: _*)
 
-    //         myList.reverse shouldEqual
-    //     }
-    // }
+            myList.reverse shouldEqual MyList.apply(list.reverse: _*)
+        }
+    }
+
+    it should "be it's own inverse function" in {
+        forAll { list: MyList[Int] =>
+            list.reverse.reverse shouldEqual list
+        }
+    }
 
     "MyList.reverse" should "return MyList(3, 2, 1) from MyList(1, 2, 3)" in {
         MyList(1, 2, 3).reverse shouldEqual MyList(3, 2, 1)
     }
 
     "test" should "demonstrate Exercise 3.8" in {
-        println(MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+        println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+    }
+
+    it should "demonstrate Exercise 3.13" in {
+        println("Exercise 3.13: foldLeftFromFoldRight - " + MyList.foldLeftFromFoldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+        println("Exercise 3.13: foldLeft              - " + MyList.foldLeft(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+        println("---------------------------------------------------------------------------------------------------------------------------")
+        println("Exercise 3.13: foldRightFromFoldLeft - " + MyList.foldRightFromFoldLeft(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+        println("Exercise 3.13: foldRight             - " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
     }
 }
