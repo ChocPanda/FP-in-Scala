@@ -19,6 +19,8 @@ sealed trait MyList[+A] {
     def lLength: Int = MyList.lLength(this)
 
     def reverse: MyList[A] = MyList.reverse(this)
+
+    def append[U >: A]: U => MyList[U] = MyList.append(this, _)
 }
 
 case object MyNil extends MyList[Nothing]
@@ -78,4 +80,10 @@ object MyList {
     
     def foldRightFromFoldLeft[A, B](as: MyList[A], base: B)(f: (A, B) => B): B = 
         foldLeft(as, (b: B) => b)((a, g) => g compose (b => f(a, b)))(base)
+
+    // Exercise 3.14
+    def append[A, U >: A]:(MyList[A], U) => MyList[U] = (as, u) => foldRight(as, MyList(u))(Cons(_, _))
+
+    // Exercise 3.15
+    def flatten[A]:(MyList[MyList[A]]) => MyList[A] = as => foldRight(as, MyNil: MyList[A])((bs, ns) => foldRight(bs, ns)(Cons(_, _)))
 }

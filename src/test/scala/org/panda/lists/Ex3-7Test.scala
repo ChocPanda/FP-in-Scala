@@ -61,11 +61,26 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         MyList(1, 2, 3).reverse shouldEqual MyList(3, 2, 1)
     }
 
-    "test" should "demonstrate Exercise 3.8" in {
-        println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+    "MyList.append" should "append an item to the end of the list" in {
+        MyList(1, 2, 3).append(4) shouldEqual MyList(1, 2, 3, 4)
     }
 
-    it should "demonstrate Exercise 3.13" in {
+    "MyList.flatten" should "flatten a list of lists of A to a list of A's" in {
+        MyList.flatten(MyList(MyList(1, 2, 3), MyList(4, 5, 6))) shouldEqual MyList(1, 2, 3, 4, 5, 6)
+    }
+
+    it should "match the behaviour of a scala.collections.list.flatten" in {
+        forAll { list: List[List[Int]] => 
+            val myList = MyList(list.map(MyList(_: _*)): _*)
+
+            MyList.flatten(myList) shouldEqual MyList(list.flatten: _*)
+        }
+    }
+
+    "test" should "demonstrate Exercise 3.13" in {
+        println("---------------------------------------------------------------------------------------------------------------------------")
+        println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
+        println("---------------------------------------------------------------------------------------------------------------------------")
         println("Exercise 3.13: foldLeftFromFoldRight - " + MyList.foldLeftFromFoldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
         println("Exercise 3.13: foldLeft              - " + MyList.foldLeft(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
         println("---------------------------------------------------------------------------------------------------------------------------")
