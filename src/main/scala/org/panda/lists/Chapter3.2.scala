@@ -25,6 +25,8 @@ sealed trait MyList[+A] {
     def mapPlus1[B >: A](implicit num: Numeric[B]): MyList[B] = MyList.mapPlus1(num)(this)
 
     def map[B](f: A => B): MyList[B] = MyList.map(f)(this)
+
+    def filter(predicate: A => Boolean): MyList[A] = MyList.filter(predicate)(this)
 }
 
 case object MyNil extends MyList[Nothing]
@@ -98,4 +100,7 @@ object MyList {
 
     // Exercise 3.18
     def map[A, B](f: A => B): MyList[A] => MyList[B] = foldRight(_, MyNil: MyList[B])((a, res) => Cons(f(a), res))
+
+    // Exercise 3.19
+    def filter[A](predicate: A => Boolean): MyList[A] => MyList[A] = foldRight(_, MyNil: MyList[A])((a, res) => if (predicate(a)) Cons(a, res) else res)
 }

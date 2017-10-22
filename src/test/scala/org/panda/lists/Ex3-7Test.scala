@@ -93,6 +93,14 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         }
     }
 
+    "MyList.filter(_ % 2 == 0)" should "match the behaviour of scala.collections.List.filter(_ % 2 == 0)" in {
+        forAll { list: List[Int] =>
+            val myList = MyList(list: _*)
+
+            myList.filter(_ % 2 == 0) shouldEqual MyList(list.filter(_ % 2 == 0): _*)
+        }
+    }
+
     "test" should "demonstrate Exercise 3.13" in {
         println("---------------------------------------------------------------------------------------------------------------------------")
         println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
