@@ -77,6 +77,22 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         }
     }
 
+    "MyList.mapPlus1" should "match the behaviour of scala.collections.List[Int].map (_ + 1)" in {
+        forAll { list: List[Int] =>
+            val myList = MyList(list: _*)
+
+            myList.mapPlus1 shouldEqual MyList(list.map(_ + 1): _*)
+        }
+    }
+
+    "MyList[Double].map(_.toString)" should "match the behaviour of scala.collections.List[Double].map(_.toString)" in {
+        forAll { list: List[Double] =>
+            val myList = MyList(list: _*)
+
+            myList.map(_.toString) shouldEqual MyList(list.map(_.toString): _*)
+        }
+    }
+
     "test" should "demonstrate Exercise 3.13" in {
         println("---------------------------------------------------------------------------------------------------------------------------")
         println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
