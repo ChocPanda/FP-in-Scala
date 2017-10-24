@@ -26,7 +26,11 @@ sealed trait MyList[+A] {
 
     def map[B](f: A => B): MyList[B] = MyList.map(f)(this)
 
+    def flatMap[B](f: A => MyList[B]): MyList[B] = MyList.flatMap(f)(this)
+
     def filter(predicate: A => Boolean): MyList[A] = MyList.filter(predicate)(this)
+
+    def flatMapFilter(predicate: A => Boolean): MyList[A] = MyList.flatMapFilter(predicate)(this)
 }
 
 case object MyNil extends MyList[Nothing]
@@ -103,4 +107,22 @@ object MyList {
 
     // Exercise 3.19
     def filter[A](predicate: A => Boolean): MyList[A] => MyList[A] = foldRight(_, MyNil: MyList[A])((a, res) => if (predicate(a)) Cons(a, res) else res)
+
+    // Exercise 3.20
+    def flatMap[A, B](f: A => MyList[B]): MyList[A] => MyList[B] = foldRight(_, MyNil: MyList[B])((a, res) => foldRight(f(a), res)(Cons(_, _)))
+
+    // Exercise 3.21
+    def flatMapFilter[A](predicate: A => Boolean): MyList[A] => MyList[A] = flatMap(a => if (predicate(a)) Cons(a, MyNil) else MyNil)
+
+    // Exercise 3.22
+    def sumValues[A](l1: MyList[A], l2: MyList[A])(implicit num: Numeric[A]): MyList[A] = (l1, l2) match {
+        case (Cons(a, as), Cons(b, bs)) => Cons(num.plus(a, b), sumValues(as, bs))
+        case _                          => MyNil
+    }
+
+    // Exercise 3.23
+    def zipWith[A, B, C](l1: MyList[A], l2: MyList[B])(f: (A, B) => C): MyList[C] = (l1, l2) match {
+        case (Cons(a, as), Cons(b, bs)) => Cons(f(a, b), zipWith(as, bs)(f))
+        case _                          => MyNil
+    }
 }

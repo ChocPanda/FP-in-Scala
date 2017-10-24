@@ -101,6 +101,31 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         }
     }
 
+    "MyList.flatMap(i => MyList(i, i))" should "match the behaviour of scala.collections.List.flatMap(i => List(i, i))" in {
+        forAll { list: List[Int] =>
+            val myList = MyList(list: _*)
+
+            myList.flatMap(i => MyList(i, i)) shouldEqual MyList(list.flatMap(i => List(i, i)): _*)
+        }
+    }
+
+    "MyList.flatMapFilter(_ % 2 == 0)" should "match the behaviour of MyList.flatMap(_ % 2 == 0)" in {
+        forAll { myList: MyList[Int] => myList.flatMapFilter(_ % 2 == 0) shouldEqual myList.filter(_ % 2 == 0) }
+    }
+
+    "MyList.sumValues" should "match the behaviour of scala.collections.List.zipped.map(_ + _)" in {
+        forAll { (list1: List[Int], list2: List[Int]) =>
+            val (myList1, myList2) = (MyList(list1: _*), MyList(list2: _*))
+            MyList.sumValues(myList1, myList2) shouldEqual MyList((list1, list2).zipped.map(_ + _): _*)
+        }
+    }
+
+    "MyList.zipWith(...)(_ + _)" should "match the behaviour of MyList.sumValues" in {
+        forAll { (myList1: MyList[Int], myList2: MyList[Int]) =>
+            MyList.zipWith(myList1, myList2)(_ + _) shouldEqual MyList.sumValues(myList1, myList2)
+        }
+    }
+
     "test" should "demonstrate Exercise 3.13" in {
         println("---------------------------------------------------------------------------------------------------------------------------")
         println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))
