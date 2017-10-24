@@ -42,10 +42,10 @@ object Tree {
 
   // Exercise 3.29
   def fold[A, B](f: A => B)(g: (B, B) => B): Tree[A] => B = {
-    // val rec: Tree[A] => B = fold(f)(g)
+    def rec: Tree[A] => B = fold(f)(g)
     _ match {
       case Leaf(l)              => f(l)
-      case Branch(left, right)  => g(fold(f)(g)(left), fold(f)(g)(right))
+      case Branch(left, right)  => g(rec(left), rec(right))
     }
   }
 
