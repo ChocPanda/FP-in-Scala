@@ -126,6 +126,27 @@ class MyListTests extends FlatSpec with Matchers with PropertyChecks {
         }
     }
 
+    // I should rewrite these as property tests but I'm tired... :(
+
+    "MyList.hasSubsequence" should "return true" in {
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(1, 2)) shouldBe true
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(2, 3)) shouldBe true
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(1, 2, 3)) shouldBe true
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(3, 4)) shouldBe true
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(5)) shouldBe true
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyNil) shouldBe true
+    }
+
+    "MyList.hasSubsequence" should "return false" in {
+        (MyNil: MyList[Int]).hasSubsequence(MyList(1)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(6)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(3, 2)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(1, 3)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(5, 6)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(1, 2, 3, 5)) shouldBe false
+        MyList(1, 2, 3, 4, 5).hasSubsequence(MyList(1, 2, 3, 4, 5, 6)) shouldBe false
+    }
+
     "test" should "demonstrate Exercise 3.13" in {
         println("---------------------------------------------------------------------------------------------------------------------------")
         println("Exercise 3.8: " + MyList.foldRight(MyList(1, 2, 3), MyNil: MyList[Int])(Cons(_, _)))

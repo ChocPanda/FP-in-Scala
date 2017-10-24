@@ -31,6 +31,8 @@ sealed trait MyList[+A] {
     def filter(predicate: A => Boolean): MyList[A] = MyList.filter(predicate)(this)
 
     def flatMapFilter(predicate: A => Boolean): MyList[A] = MyList.flatMapFilter(predicate)(this)
+
+    def hasSubsequence[B >: A](sub: MyList[B]): Boolean = MyList.hasSubsequence(this, sub)
 }
 
 case object MyNil extends MyList[Nothing]
@@ -124,5 +126,21 @@ object MyList {
     def zipWith[A, B, C](l1: MyList[A], l2: MyList[B])(f: (A, B) => C): MyList[C] = (l1, l2) match {
         case (Cons(a, as), Cons(b, bs)) => Cons(f(a, b), zipWith(as, bs)(f))
         case _                          => MyNil
+    }
+
+    // Exercise 3.24
+    def hasSubsequence[A, B >: A](sup: MyList[A], sub: MyList[B]): Boolean = {
+        def isSubsequence: (MyList[A], MyList[B]) => Boolean = (_, _) match {
+            case (_, MyNil) => true
+            case (Cons(a, as), Cons(b, bs)) if a == b => isSubsequence(as, bs)
+            case _ => false
+        }
+
+        (sup, sub) match {
+            case (_, MyNil) => true
+            case (MyNil, _) => false
+            case (Cons(a, as), Cons(b, bs)) if a == b && isSubsequence(as, bs) => true
+            case (Cons(_, as), bs) => hasSubsequence(as, bs)
+        }        
     }
 }
